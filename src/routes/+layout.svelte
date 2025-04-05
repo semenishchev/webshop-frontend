@@ -1,21 +1,27 @@
-<script lang="tsx">
+<script lang="ts">
 	import '../app.css';
-	import { Navbar, Search, NavBrand, DarkMode } from 'flowbite-svelte';
+	import { Navbar, NavBrand, DarkMode, Footer, FooterCopyright, FooterLinkGroup, FooterLink } from 'flowbite-svelte';
 	import NavbarButton from '$lib/component/NavbarButton.svelte';
 	import { CartOutline, UserCircleOutline } from 'flowbite-svelte-icons'
 	import { onMount } from 'svelte';
-	import { fetchUser, currentUser } from '$lib/user';
-	// import { debounce } from 'lodash'; // optional for better UX
+	import { fetchUser, currentUser, type User } from '$lib/user';
+	import NavbarSearch from '$lib/component/NavbarSearch.svelte';
+	import LoggedInDropdown from '$lib/component/LoggedInDropdown.svelte';
+	import LoggedOutDropdown from '$lib/component/LoggedOutDropdown.svelte';
 
 	let isMobile = $state(false);
+	let isPageShort = $state(false); // used for footer docking
+	let user = $state<User | null>(null);
 
 	const handleResize = () => {
-		isMobile = window.innerWidth < 768;
+		isMobile = window.innerWidth < 760;
+		isPageShort = document.documentElement.scrollHeight <= window.innerHeight;
 	};
 
 	onMount(() => {
 		fetchUser("me").then(user => {
 			currentUser.set(user);
+			user = user;
 			console.log(user);
 		}).catch(e => {
 			console.error("Failed to set user: " + e);
@@ -35,9 +41,7 @@
 		</NavBrand>
 
 		{#if !isMobile}
-			<div class="flex-1 flex justify-center">
-				<Search class="search-bar w-full sm:w-[500px]" />
-			</div>
+			<NavbarSearch/>
 		{/if}
 
 		<div class="flex items-center gap-4">
@@ -45,7 +49,13 @@
 
 			<NavbarButton aria-label="Login">
 				<UserCircleOutline class="w-5 h-5" />
+				{#if user != null}
+					<LoggedInDropdown/>
+				{:else}
+					<LoggedOutDropdown/>
+				{/if}
 			</NavbarButton>
+
 			<NavbarButton aria-label="Cart">
 				<CartOutline class="w-5 h-5" />
 			</NavbarButton>
@@ -53,12 +63,30 @@
 	</div>
 
 	{#if isMobile}
-		<div class="w-full px-1">
-			<Search class="search-bar mt-2" />
-		</div>
+		<NavbarSearch/>
 	{/if}
 </Navbar>
 
-{@render children()}
+<div class="container mx-auto">
+	{@render children()}
+</div>
 
+<style>
+    .docked {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
 
+<div class:docked={isPageShort}>
+	<Footer class="dark:bg-gray-900 dark:text-blue-100 border-b dark:border-gray-800 gap-2 px-4 py-2">
+		<div class="sm:flex sm:items-center sm:justify-between">
+			<FooterCopyright href="/" by="Oleksandr Semenishchev; " copyrightMessage="Licensed under MIT" />
+			<FooterLinkGroup ulClass="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+				<FooterLink href="https://github.com/semenishchev/webshop-frontend">Source code</FooterLink>
+				<FooterLink href="https://github.com/semenishchev/webshop-backend">I am NOT a frontend developer</FooterLink>
+			</FooterLinkGroup>
+		</div>
+	</Footer>
+</div>

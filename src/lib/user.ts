@@ -14,7 +14,7 @@ export type User = {
 }
 
 export const fetchUser = async (id: string) => {
-	return fetchObject<User>(`user/${id}`);
+	return fetchObject<User>(`user/${id}`, undefined, undefined);
 }
 
 export const currentUser = writable<User | null | undefined>(undefined)
