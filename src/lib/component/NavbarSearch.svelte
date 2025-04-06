@@ -24,7 +24,7 @@
 
 <div class="flex-1 flex justify-center" onfocusout={unfocus}>
 	<div class="relative w-full sm:w-[500px]">
-		<Search class="search-bar w-full sm:w-[500px]" bind:value={query} on:input={fetchSuggestions}/>
+		<Search class="search-bar bg-gray-800 w-full sm:w-[500px]" bind:value={query} on:input={fetchSuggestions}/>
 		{#if suggestions.length}
 			<div class="absolute z-50 w-full mt-1 rounded-t-none border-t-0 rounded-b-lg">
 				<Listgroup>

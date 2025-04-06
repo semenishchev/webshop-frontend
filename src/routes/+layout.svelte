@@ -8,10 +8,12 @@
 	import NavbarSearch from '$lib/component/NavbarSearch.svelte';
 	import LoggedInDropdown from '$lib/component/LoggedInDropdown.svelte';
 	import LoggedOutDropdown from '$lib/component/LoggedOutDropdown.svelte';
+	import Cart from '$lib/component/Cart.svelte';
 
 	let isMobile = $state(false);
 	let isPageShort = $state(false); // used for footer docking
 	let user = $state<User | null>(null);
+	let cartHidden = $state(true)
 
 	const handleResize = () => {
 		isMobile = window.innerWidth < 760;
@@ -56,7 +58,7 @@
 				{/if}
 			</NavbarButton>
 
-			<NavbarButton aria-label="Cart">
+			<NavbarButton aria-label="Cart" onclick={() => cartHidden = false}>
 				<CartOutline class="w-5 h-5" />
 			</NavbarButton>
 		</div>
@@ -70,6 +72,8 @@
 <div class="container mx-auto">
 	{@render children()}
 </div>
+
+<Cart id="cart" bind:hidden={cartHidden}/>
 
 <style>
     .docked {
