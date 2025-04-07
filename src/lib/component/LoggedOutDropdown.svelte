@@ -6,5 +6,5 @@
 
 <Dropdown>
 	<IconedDropdownItem href="/login"><AddressBookOutline/>Log in</IconedDropdownItem>
-	<IconedDropdownItem><UserAddOutline/>Sign in</IconedDropdownItem>
+	<IconedDropdownItem href="/register"><UserAddOutline class="flex-shrink-0"/>Sign in</IconedDropdownItem>
 </Dropdown>

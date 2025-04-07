@@ -17,7 +17,7 @@
 
 	const handleResize = () => {
 		isMobile = window.innerWidth < 760;
-		isPageShort = document.documentElement.scrollHeight <= window.innerHeight;
+		isPageShort = document.documentElement.scrollHeight >= window.innerHeight;
 	};
 
 	onMount(() => {
@@ -69,11 +69,12 @@
 	{/if}
 </Navbar>
 
-<div class="container mx-auto">
+<div class="container mx-auto overflow-y-auto">
 	{@render children()}
 </div>
-
-<Cart id="cart" bind:hidden={cartHidden}/>
+{#if !cartHidden}
+<Cart id="cart"/>
+{/if}
 
 <style>
     .docked {
@@ -83,8 +84,8 @@
     }
 </style>
 
-<div class:docked={isPageShort}>
-	<Footer class="dark:bg-gray-900 dark:text-blue-100 border-b dark:border-gray-800 gap-2 px-4 py-2">
+<div class="{isPageShort ? '' : 'docked'}">
+	<Footer class="dark:bg-gray-900 dark:text-blue-100 border-b border-gray-800 gap-2 px-4 py-2 mt-4">
 		<div class="sm:flex sm:items-center sm:justify-between">
 			<FooterCopyright href="/" by="Oleksandr Semenishchev; " copyrightMessage="Licensed under MIT" />
 			<FooterLinkGroup ulClass="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
