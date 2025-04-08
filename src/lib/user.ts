@@ -41,4 +41,21 @@ export const login = async (email: string, password: string): Promise<AuthResult
 	return await authentication.text();
 }
 
+export const initiateRegistration = async (email: string, password: string) => {
+	const registration = await makeApiCall("auth/register", {
+		method: "POST",
+		body: JSON.stringify({
+			email: email,
+			password: password
+		})
+	});
+
+	return registration.ok;
+}
+
+export const checkIfEmailConfirmed = async (email: string) => {
+	const emailCheck = await makeApiCall(`auth/check-email?email=${email}`);
+	return emailCheck.ok;
+}
+
 export const currentUser = writable<User | null | undefined>(undefined)

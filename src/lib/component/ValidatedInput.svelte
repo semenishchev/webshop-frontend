@@ -4,8 +4,6 @@
 	type ValidatorFunc = (text: string) => boolean | undefined;
 	type InputColor = "base" | "green" | "red";
 
-	// const props = $props();
-
 	let {
 		id,
 		label,

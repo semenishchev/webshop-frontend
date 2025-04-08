@@ -49,7 +49,7 @@
 		passwordValidation = null;
 	}
 
-	const submit = () => {
+	const submit = async () => {
 		if(emailInput.length === 0) {
 			currentError = {
 				title: "E-Mail is not specified",
@@ -87,6 +87,11 @@
 			}
 		}
 		currentError = null;
+		try {
+			await
+		} catch (e) {
+			console.error(e);
+		}
 		return true;
 	}
 </script>
