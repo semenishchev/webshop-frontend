@@ -8,7 +8,7 @@
 	import { isValidEmail, checkPassword, passwordChecks } from '$lib/util';
 	import type { ValidationResult, ErrorAlert } from '$lib/util';
 	import LoadableButton from '$lib/component/LoadableButton.svelte';
-	import { currentUser } from '$lib/user';
+	import { currentUser, initiateRegistration } from '$lib/user';
 	import { get } from 'svelte/store';
 	import { redirect } from '@sveltejs/kit';
 	const colorsToAmount = ["red", "orange", "yellow", "green"]
@@ -87,12 +87,17 @@
 			}
 		}
 		currentError = null;
+		let flag = true;
 		try {
-			await
+			flag = await initiateRegistration(emailInput, passwordInput);
 		} catch (e) {
 			console.error(e);
+			currentError = {
+				title: "An error occurred while registering your account",
+				detailedMessage: e?.toString() ?? "Unknown error"
+			}
 		}
-		return true;
+		return flag;
 	}
 </script>
 

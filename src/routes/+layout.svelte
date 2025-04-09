@@ -17,8 +17,12 @@
 
 	const handleResize = () => {
 		isMobile = window.innerWidth < 760;
-		isPageShort = document.documentElement.scrollHeight >= window.innerHeight;
+		isPageShort = (document.querySelector("body")?.scrollHeight ?? 0) >= window.innerHeight;
 	};
+
+	$effect(() => {
+		handleResize();
+	});
 
 	onMount(() => {
 		fetchUser("me").then(user => {
