@@ -1,1 +1,5 @@
-!build/app
+build/
+node_modules/
+.svelte-kit
+.idea
+.env.local
