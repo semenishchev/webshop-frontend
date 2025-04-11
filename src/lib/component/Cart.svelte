@@ -24,7 +24,7 @@
 	});
 </script>
 
-<Drawer transitionType="fly" {transitionParams} bind:hidden={hidden} id={id} placement="right" width="w-100">
+<Drawer transitionType="fly" {transitionParams} hidden={hidden} id={id} placement="right" width="w-100">
 	<div class="flex items-center">
 		<h5 id="drawer-label" class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400">
 			<CartSolid class="w-5 h-5 me-2.5" />Cart

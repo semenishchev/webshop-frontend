@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { Button, Spinner } from 'flowbite-svelte';
-	const props = $props();
-	const { children, action } = props;
+
+	const props = $props(), { children, action } = props;
 	let loading = $state(false);
-	const doAction = async (event: Event) => {
-		event.preventDefault();
+	export const doAction = async (event?: Event | undefined) => {
+		event?.preventDefault();
 		if(loading) return; // failsafe
-		console.log("Action")
 		loading = true;
 		try {
 			loading = await action(); // if action returns true, keep loading and do something

@@ -5,15 +5,15 @@
 	import { CheckOutline, CloseOutline, InfoCircleSolid } from 'flowbite-svelte-icons';
 	import Centered from '$lib/component/Centered.svelte';
 	import ValidatedInput from '$lib/component/ValidatedInput.svelte';
-	import { isValidEmail, checkPassword, passwordChecks } from '$lib/util';
+	import { isValidEmail, checkPassword, passwordChecks, extractMessage } from '$lib/util';
 	import type { ValidationResult, ErrorAlert } from '$lib/util';
 	import LoadableButton from '$lib/component/LoadableButton.svelte';
 	import { currentUser, initiateRegistration } from '$lib/user';
 	import { get } from 'svelte/store';
-	import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 	const colorsToAmount = ["red", "orange", "yellow", "green"]
-	if(get(currentUser)) {
-		redirect(301, "/profile/me");
+	if(get(currentUser) !== null) {
+		goto("/profile/me");
 	}
 	const getColorOfAmountPassed = (amount: number): string => {
 		return colorsToAmount[amount - 1] ?? "green";
@@ -94,8 +94,12 @@
 			console.error(e);
 			currentError = {
 				title: "An error occurred while registering your account",
-				detailedMessage: e?.toString() ?? "Unknown error"
+				detailedMessage: extractMessage(e) ?? "Unknown error"
 			}
+			return false;
+		}
+		if(flag) {
+			await goto(`/register/confirmation?email=${emailInput}`)
 		}
 		return flag;
 	}

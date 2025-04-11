@@ -14,7 +14,6 @@
 			searchedBefore = false;
 			return;
 		}
-		console.log('shitballz')
 		setTimeout(() => {
 			suggestions = ['Suggestion 1', 'Suggestion 2', 'Suggestion 3'].filter(s =>
 				s.toLowerCase().includes(query.toLowerCase())

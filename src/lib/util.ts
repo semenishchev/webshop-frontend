@@ -70,6 +70,30 @@ export const checkPassword = (password: string): ValidationResult => {
 	return new ValidationResult(checks, passed);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const extractMessage = (obj: any | undefined | null): string | null => {
+	if(!obj) {
+		return null;
+	}
+	if(typeof obj === "string") return obj;
+	if(typeof obj === "object") {
+		if(obj.message) {
+			return obj.message.toString();
+		}
+		if(obj["error-message"]) {
+			return obj["error-message"].toString();
+		}
+		if(obj.details) {
+			return obj.details;
+		}
+		if(obj.detail) {
+			return obj.detail;
+		}
+	}
+
+	return obj.toString();
+}
+
 export type ErrorAlert = {
 	title: string;
 	detailedMessage: string;

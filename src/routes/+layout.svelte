@@ -1,9 +1,18 @@
 <script lang="ts">
 	import '../app.css';
-	import { Navbar, NavBrand, DarkMode, Footer, FooterCopyright, FooterLinkGroup, FooterLink } from 'flowbite-svelte';
+	import {
+		Navbar,
+		NavBrand,
+		DarkMode,
+		Footer,
+		FooterCopyright,
+		FooterLinkGroup,
+		FooterLink,
+		Spinner
+	} from 'flowbite-svelte';
 	import NavbarButton from '$lib/component/NavbarButton.svelte';
 	import { CartOutline, UserCircleOutline } from 'flowbite-svelte-icons'
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { fetchUser, currentUser, type User } from '$lib/user';
 	import NavbarSearch from '$lib/component/NavbarSearch.svelte';
 	import LoggedInDropdown from '$lib/component/LoggedInDropdown.svelte';
@@ -12,7 +21,7 @@
 
 	let isMobile = $state(false);
 	let isPageShort = $state(false); // used for footer docking
-	let user = $state<User | null>(null);
+	let user = $state<User | null | undefined>(undefined);
 	let cartHidden = $state(true)
 
 	const handleResize = () => {
@@ -25,12 +34,11 @@
 	});
 
 	onMount(() => {
-		fetchUser("me").then(user => {
-			currentUser.set(user);
-			user = user;
-			console.log(user);
+		fetchUser("me").then(_user => {
+			currentUser.set(_user);
+			user = _user;
 		}).catch(e => {
-			console.error("Failed to set user: " + e);
+			console.error("Failed to set user: " + e.message);
 		});
 		handleResize();
 		window.addEventListener('resize', handleResize);
@@ -52,15 +60,18 @@
 
 		<div class="flex items-center gap-4">
 			<DarkMode />
-
-			<NavbarButton aria-label="Login">
-				<UserCircleOutline class="w-5 h-5" />
-				{#if user != null}
+			{#if user === undefined}
+				<Spinner size={4} />
+			{:else}
+				<NavbarButton aria-label="Login">
+					<UserCircleOutline class="w-5 h-5" />
+				</NavbarButton>
+				{#if user !== null}
 					<LoggedInDropdown/>
 				{:else}
 					<LoggedOutDropdown/>
 				{/if}
-			</NavbarButton>
+			{/if}
 
 			<NavbarButton aria-label="Cart" onclick={() => cartHidden = false}>
 				<CartOutline class="w-5 h-5" />
@@ -76,9 +87,8 @@
 <div class="container mx-auto overflow-y-auto">
 	{@render children()}
 </div>
-{#if !cartHidden}
-<Cart id="cart"/>
-{/if}
+
+<Cart id="cart" bind:hidden={cartHidden}/>
 
 <style>
     .docked {

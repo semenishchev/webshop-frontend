@@ -14,6 +14,7 @@
 		realtimeValidation = false,
 		successMessage = "",
 		failureMessage = "",
+		maxLength = 128,
 		input = $bindable<string>()
 	} = $props();
 
@@ -36,11 +37,11 @@
 
 <div class="dark:bg-gray-900">
 {#if realtimeValidation}
-	<FloatingLabelInput color={color} style={style} id={id} name={id} type={type} placeholder={placeholder} bind:value={input} oninput={validate}>
+	<FloatingLabelInput maxlength={maxLength} color={color} style={style} id={id} name={id} type={type} placeholder={placeholder} bind:value={input} oninput={validate}>
 		{label}
 	</FloatingLabelInput>
 {:else}
-	<FloatingLabelInput color={color} style={style} id={id} name={id} type={type} placeholder={placeholder} bind:value={input} onfocusout={validate} oninput={reset}>
+	<FloatingLabelInput maxlength={maxLength} color={color} style={style} id={id} name={id} type={type} placeholder={placeholder} bind:value={input} onfocusout={validate} oninput={reset}>
 		{label}
 	</FloatingLabelInput>
 {/if}
