@@ -1,15 +1,17 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { authenticate, fetchObject, makeApiCall } from '$lib/api';
 import { invalidateAll } from '$app/navigation';
+import type { Cart } from '$lib/shop';
 export type Profile = {
 	fullName: string;
 	phoneNumber: string;
 }
+
 export type User = {
 	id: number;
 	email: string;
 	profile: Profile;
-	cart: never; // todo: change to cart object
+	cart: Cart;
 	roles: string[];
 	isSuperuser: boolean;
 }
@@ -24,6 +26,7 @@ export const fetchUser = async (id: string) => {
 	}
 	return result;
 }
+
 type AuthResult = {
 	session: string;
 	expiresAt: number;
@@ -68,6 +71,15 @@ export const initiateRegistration = async (email: string, password: string) => {
 	return registration.ok;
 }
 
+export const saveUserCart = () => {
+	return makeApiCall("user/me/saveCart", {
+		headers: authenticate(),
+		body: JSON.stringify({
+			cart: get(currentUser)!.cart.products
+		})
+	});
+}
+
 export const signOut = async () => {
 	await makeApiCall("auth/logout");
 	localStorage.removeItem("session-id");
@@ -80,4 +92,5 @@ export const checkIfEmailConfirmed = async (email: string) => {
 	return !emailCheck.ok; // it's a bit weird, but if email is in verification it will return 200, if email isn't in verification it will return 404
 }
 
-export const currentUser = writable<User | null | undefined>(undefined)
+// User object when logged in, null when logged out and undefined when loading
+export const currentUser = writable<User | null | undefined>(undefined);

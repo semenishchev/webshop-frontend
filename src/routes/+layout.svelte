@@ -12,7 +12,7 @@
 	} from 'flowbite-svelte';
 	import NavbarButton from '$lib/component/NavbarButton.svelte';
 	import { CartOutline, UserCircleOutline } from 'flowbite-svelte-icons'
-	import { onMount, setContext } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fetchUser, currentUser, type User } from '$lib/user';
 	import NavbarSearch from '$lib/component/NavbarSearch.svelte';
 	import LoggedInDropdown from '$lib/component/LoggedInDropdown.svelte';
@@ -22,7 +22,7 @@
 	let isMobile = $state(false);
 	let isPageShort = $state(false); // used for footer docking
 	let user = $state<User | null | undefined>(undefined);
-	let cartHidden = $state(true)
+	let cartHidden = $state(true);
 
 	const handleResize = () => {
 		isMobile = window.innerWidth < 760;
@@ -49,16 +49,16 @@
 </script>
 
 <Navbar class="dark:bg-gray-900 dark:text-blue-100 border-b dark:border-gray-800 flex flex-col md:flex-row md:items-center gap-2 px-4 py-2">
-	<div class="w-full flex justify-between items-center gap-4">
-		<NavBrand href="/">
+	<div class="w-full flex gap-4 items-center justify-between">
+		<NavBrand href="/" class="justify-start items-stretch">
 			<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Webshop</span>
 		</NavBrand>
 
 		{#if !isMobile}
-			<NavbarSearch/>
+			<NavbarSearch class="absolute left-1/2 -translate-x-1/2 items-center self-center justify-center"/>
 		{/if}
 
-		<div class="flex items-center gap-4">
+		<div class="flex justify-end gap-4">
 			<DarkMode />
 			{#if user === undefined}
 				<Spinner size={4} />
