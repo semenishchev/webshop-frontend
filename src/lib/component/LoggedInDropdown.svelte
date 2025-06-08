@@ -7,6 +7,7 @@
 	import IconedDropdownItem from '$lib/component/IconedDropdownItem.svelte';
 	import LoadableButton from '$lib/component/LoadableButton.svelte';
 	import { extractMessage } from '$lib/util';
+
 	const user = get(currentUser) as User; // not null at this point
 	let signoutRequestOpen = $state(false);
 	let currentError = $state("");
@@ -34,7 +35,7 @@
 	<IconedDropdownItem href="/orders/me"><ReceiptOutline/>My orders</IconedDropdownItem>
 	<IconedDropdownItem href="/profile/me"><ProfileCardOutline/>My profile</IconedDropdownItem>
 	<DropdownDivider/>
-	{#if (user.roles?.length ?? 0) || user.isSuperuser}
+	{#if user.superuser}
 		<IconedDropdownItem><UserSettingsOutline/>Administration</IconedDropdownItem>
 		<DropdownDivider/>
 	{/if}

@@ -12,8 +12,13 @@ export type User = {
 	email: string;
 	profile: Profile;
 	cart: Cart;
-	roles: string[];
-	isSuperuser: boolean;
+	superuser: boolean;
+}
+
+declare global {
+	interface WindowEventMap {
+		userAvailable: CustomEvent<{ user: User | null}>;
+	}
 }
 
 export const fetchUser = async (id: string) => {
@@ -56,12 +61,16 @@ export const login = async (email: string, password: string, toptCode?: string |
 	return authentication.toString();
 }
 
-export const initiateRegistration = async (email: string, password: string) => {
+export const initiateRegistration = async (email: string, password: string, phone: string, fullName: string) => {
 	const registration = await makeApiCall("auth/register", {
 		method: "POST",
 		body: JSON.stringify({
 			email: email,
-			password: password
+			password: password,
+			profile: {
+				fullName: fullName,
+				phoneNumber: phone
+			}
 		})
 	});
 	const status = registration.status;
@@ -94,3 +103,8 @@ export const checkIfEmailConfirmed = async (email: string) => {
 
 // User object when logged in, null when logged out and undefined when loading
 export const currentUser = writable<User | null | undefined>(undefined);
+export const fireUserEvent = (_user: User | null) => {
+	window.dispatchEvent(new CustomEvent("userAvailable", {detail: {
+		user: _user,
+	}}));
+}

@@ -2,21 +2,20 @@ FROM oven/bun:alpine AS builder
 
 WORKDIR /app
 
-COPY package.json vite.config.ts tsconfig.json svelte.config.js src static ./
-RUN bun install --no-save
-
 COPY . .
-RUN bun --bun run build
-RUN bun build --compile --target=bun-linux-x64 build/index.js --outfile /app/app
+RUN bun install --no-save && bun run build
 
-FROM alpine:latest
+FROM oven/bun:alpine
 
-RUN adduser --disabled-password --home /home/container container
+RUN apk add --no-cache libstdc++ ca-certificates && \
+    adduser -D -h /home/container container
 
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-COPY --from=builder /app/app .
+COPY --from=builder /app/build ./
 
-CMD ["./app"]
+EXPOSE 3000
+
+CMD ["bun", "index.js"]

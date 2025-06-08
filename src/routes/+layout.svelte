@@ -13,7 +13,7 @@
 	import NavbarButton from '$lib/component/NavbarButton.svelte';
 	import { CartOutline, UserCircleOutline } from 'flowbite-svelte-icons'
 	import { onMount } from 'svelte';
-	import { fetchUser, currentUser, type User } from '$lib/user';
+	import { fetchUser, currentUser, type User, fireUserEvent } from '$lib/user';
 	import NavbarSearch from '$lib/component/NavbarSearch.svelte';
 	import LoggedInDropdown from '$lib/component/LoggedInDropdown.svelte';
 	import LoggedOutDropdown from '$lib/component/LoggedOutDropdown.svelte';
@@ -34,12 +34,21 @@
 	});
 
 	onMount(() => {
-		fetchUser("me").then(_user => {
-			currentUser.set(_user);
-			user = _user;
-		}).catch(e => {
-			console.error("Failed to set user: " + e.message);
-		});
+		let interval: number | undefined = undefined;
+		interval = setInterval(() => {
+			fetchUser("me").then(_user => {
+				currentUser.set(_user);
+				user = _user;
+				clearInterval(interval);
+				if(!_user) {
+					fireUserEvent(null);
+					return;
+				}
+				fireUserEvent(_user);
+			}).catch(e => {
+				console.error("Failed to set user: " + e.message);
+			});
+		}, 5000);
 		handleResize();
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
@@ -61,7 +70,9 @@
 		<div class="flex justify-end gap-4">
 			<DarkMode />
 			{#if user === undefined}
-				<Spinner size={4} />
+				<div class="text-center pt-1">
+					<Spinner size="5"/>
+				</div>
 			{:else}
 				<NavbarButton aria-label="Login">
 					<UserCircleOutline class="w-5 h-5" />

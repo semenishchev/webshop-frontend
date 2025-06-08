@@ -5,16 +5,26 @@
 	import { CheckOutline, CloseOutline, InfoCircleSolid } from 'flowbite-svelte-icons';
 	import Centered from '$lib/component/Centered.svelte';
 	import ValidatedInput from '$lib/component/ValidatedInput.svelte';
-	import { isValidEmail, checkPassword, passwordChecks, extractMessage } from '$lib/util';
+	import {
+		isValidEmail,
+		checkPassword,
+		passwordChecks,
+		extractMessage,
+		isValidName,
+		isValidPhoneNumber
+	} from '$lib/util';
 	import type { ValidationResult, ErrorAlert } from '$lib/util';
 	import LoadableButton from '$lib/component/LoadableButton.svelte';
 	import { currentUser, initiateRegistration } from '$lib/user';
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	const colorsToAmount = ["red", "orange", "yellow", "green"]
-	if(get(currentUser) !== null) {
-		goto("/profile/me");
-	}
+	onMount(() => {
+		if(get(currentUser)) {
+			goto("/profile/me");
+		}
+	})
 	const getColorOfAmountPassed = (amount: number): string => {
 		return colorsToAmount[amount - 1] ?? "green";
 	}
@@ -26,6 +36,8 @@
 	let passwordInput: string = ""; // copied from password validation, that's why not state
 	let passwordValidationInput = $state(""); // copied from password validation, that's why not state
 	let emailInput = $state("");
+	let phoneInput = $state("");
+	let fullNameInput = $state("")
 
 	const validatePassword = (password: string): boolean | undefined => {
 		if(password.length === 0) {
@@ -89,7 +101,7 @@
 		currentError = null;
 		let flag = true;
 		try {
-			flag = await initiateRegistration(emailInput, passwordInput);
+			flag = await initiateRegistration(emailInput, passwordInput, phoneInput, fullNameInput);
 		} catch (e) {
 			console.error(e);
 			currentError = {
@@ -108,6 +120,14 @@
 <Centered>
 	<div class="text-4xl lg:text-6xl leading-none font-extrabold text-gray-900 dark:text-white max-w-2xl mb-4">Sign in</div>
 	<form>
+		<div class="mt-6 grid gap-6 md:grid-cols-2">
+			<div class="mb-6">
+				<ValidatedInput type="text" id="fullName" validator={isValidName} bind:input={fullNameInput} label="Full name" style="outlined"/>
+			</div>
+			<div class="mb-6">
+				<ValidatedInput type="tel" id="phone" validator={isValidPhoneNumber} bind:input={phoneInput} label="Phone Number" style="outlined"/>
+			</div>
+		</div>
 		<div class="mb-6">
 			<ValidatedInput type="email" id="email" validator={isValidEmail} bind:input={emailInput} label="E-Mail" style="outlined"/>
 		</div>
@@ -167,7 +187,10 @@
 			</Alert>
 		{/if}
 		<div>
-			<LoadableButton type="button" class="w-full" action={submit}>Sign in</LoadableButton>
+			<LoadableButton type="button" class="w-full mb-6" action={submit}>Sign in</LoadableButton>
 		</div>
+		<a href="/login" class="mb-6 text-blue-500 underline">
+			Already have an account?
+		</a>
 	</form>
 </Centered>

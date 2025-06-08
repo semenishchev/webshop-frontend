@@ -1,8 +1,31 @@
 const emailValidatorRegex = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+const nameValidatorRegex = new RegExp(/^[a-zA-ZÀ-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF\s\-']{2,50}$/);
+const formattedPhoneValidatorRegex = new RegExp(/^(\+?1[-.\s]?)?(\(?[0-9]{3}\)?[-.\s]?)?[0-9]{3}[-.\s]?[0-9]{4}$|^(\+?[1-9]\d{0,3}[-.\s]?)?(\(?[0-9]{1,4}\)?[-.\s]?)?[0-9]{1,4}[-.\s]?[0-9]{1,9}$/);
+const phoneValidatorRegex = new RegExp(/^(\+?1?)?[0-9]{7,15}$/);
+
 export const isValidEmail = (text: string) => {
-	if(text.length === 0) return undefined;
+	if(!text) return undefined;
+	const trimmed = text.trim();
+	if(trimmed.length === 0) return undefined;
 	return emailValidatorRegex.test(text);
 }
+
+export const isValidName = (name: string) => {
+	if (!name) return undefined;
+
+	const trimmedName = name.trim();
+	if (trimmedName.length === 0) return undefined;
+	return nameValidatorRegex.test(trimmedName);
+};
+
+export const isValidPhoneNumber = (phone: string) => {
+	if (!phone) return undefined;
+
+	const cleanPhone = phone.replace(/\D/g, '');
+
+	if (cleanPhone.length === 0) return undefined;
+	return phoneValidatorRegex.test(cleanPhone) && formattedPhoneValidatorRegex.test(phone);
+};
 
 export type PasswordCheck = {
 	label: string;

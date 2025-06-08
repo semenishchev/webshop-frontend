@@ -10,12 +10,15 @@
 
 	import { isNaN } from 'lodash';
 	import { get } from 'svelte/store';
+	import { onMount } from 'svelte';
 	const { data } = $props();
 	const origin = data.origin;
 
-	if(get(currentUser) !== null) {
-		goto("/profile/me");
-	}
+	onMount(() => {
+		if(get(currentUser) !== null) {
+			goto("/profile/me");
+		}
+	});
 
 	let emailInput = $state("");
 	let passwordInput = $state("");
@@ -104,6 +107,10 @@
 		</div>
 		<a href="/login/reset-password" class="mb-6 text-blue-500 underline">
 			Forgot password?
+		</a>
+		<br>
+		<a href="/register" class="mb-6 text-blue-500 underline">
+			Don't have an account?
 		</a>
 	</form>
 {/if}

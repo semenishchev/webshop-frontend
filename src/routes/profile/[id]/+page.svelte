@@ -3,13 +3,13 @@
 	import { currentUser, fetchUser, type User } from '$lib/user.js';
 	import { InfoCircleSolid } from 'flowbite-svelte-icons';
 	import { extractMessage } from '$lib/util';
-	import { Alert, ImagePlaceholder } from 'flowbite-svelte';
+	import { Alert, Spinner } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import Centered from '$lib/component/Centered.svelte';
 
 	let { data } = $props();
 	const requestedUserId = data.userId;
-	let user: User | null = $state(requestedUserId === "me" ? get(currentUser) : null);
+	let user: User | null | undefined = $state(requestedUserId === "me" ? get(currentUser) : null);
 	let currentError = $state("");
 	onMount(() => {
 		if(user === null) {
@@ -36,7 +36,10 @@
 	{:else if user}
 		<div class="text-4xl lg:text-6xl leading-none font-extrabold text-gray-900 dark:text-white max-w-2xl mb-4">Welcome back, {user.profile.fullName}</div>
 	{:else}
-		<ImagePlaceholder />
+		<div class="absolute top1/2 left-1/2">
+			<Spinner size="10"/>
+		</div>
+
 <!--		<div class="h-3 w-full bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>-->
 	{/if}
 </Centered>
